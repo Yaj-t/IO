@@ -52,10 +52,10 @@ def LOOK(arr, head, direction):
 # Example usage
 arr = [random.randint(0, 199) for _ in range(20)]
 # arr = [176, 79, 34, 60, 92, 11, 41, 114]
-head = 176
+head = arr[0]
 direction = "left"
 
-print("array: {arr} head: {head} direction: {direction}")
+print(f"array: {arr} head: {head} direction: {direction}")
 
 sequence = LOOK(arr, head, direction)
 print("The sequence of movements is:", sequence)
