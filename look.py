@@ -62,7 +62,7 @@ def LOOK(arr, head, direction):
 
 # Example Usage
 arr = [176, 79, 34, 60, 92, 11, 41, 114]
-head = 176
+head = 200
 direction = 'left'
 
 distance, seek_sequence = LOOK(arr, head, direction)
@@ -70,7 +70,7 @@ distance, seek_sequence = LOOK(arr, head, direction)
 print("Total number of seek operations =", distance)
 print("Seek Sequence is", seek_sequence)
 
-# Plotting the Graph
+# Plotting the Graph with numbers on points
 plt.figure(figsize=(10, 5))
 plt.plot(seek_sequence, marker='o')
 plt.title("Disk Arm Movement - LOOK Algorithm")
@@ -78,4 +78,9 @@ plt.xlabel("Seek Sequence")
 plt.ylabel("Disk Track Number")
 plt.ylim(0, 200)  # Set the y-axis limit to 0-200
 plt.grid(linestyle='--')
+
+# Adding numbers to each point
+for i, track_number in enumerate(seek_sequence):
+    plt.text(i, track_number, str(track_number), ha='right', va='bottom')
+
 plt.show()
