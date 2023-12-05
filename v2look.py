@@ -1,39 +1,56 @@
-import matplotlib.pyplot as plt
+def LOOK(arr, head, direction):
+    """
+    Function to perform the LOOK algorithm
 
-def look_scheduling(requests, head, direction='left'):
-    if not requests:
-        return []
+    :param arr: List of disk locations to access
+    :param head: Starting position of the disk head
+    :param direction: Direction of head movement ('left' or 'right')
+    :return: The order of disk accesses
+    """
+    size = len(arr)
+    distance = 0
+    seek_sequence = []
 
-    requests.sort()
-    path = [head]
-    index = 0
+    # Appending end values which has to be visited
+    # before reversing the direction
+    if direction == "left":
+        left = [x for x in arr if x <= head]
+        right = [x for x in arr if x > head]
+        left.sort()
+        right.sort()
 
-    # Find the first request in the direction of head movement
-    for i in range(len(requests)):
-        if requests[i] >= head:
-            index = i
-            break
+        # First service the requests on the left side
+        for i in range(len(left) - 1, -1, -1):
+            cur_track = left[i]
+            seek_sequence.append(cur_track)
 
-    # Service requests in the initial direction
-    if direction == 'left':
-        for i in range(index-1, -1, -1):
-            path.append(requests[i])
-        for i in range(index, len(requests)):
-            path.append(requests[i])
-    else:
-        for i in range(index, len(requests)):
-            path.append(requests[i])
-        for i in range(index-1, -1, -1):
-            path.append(requests[i])
+        # Then move to the right side
+        for i in range(len(right)):
+            cur_track = right[i]
+            seek_sequence.append(cur_track)
 
-    return path
+    elif direction == "right":
+        left = [x for x in arr if x <= head]
+        right = [x for x in arr if x > head]
+        left.sort()
+        right.sort()
 
+        # First service the requests on the right side
+        for i in range(len(right)):
+            cur_track = right[i]
+            seek_sequence.append(cur_track)
 
+        # Then move to the left side
+        for i in range(len(left) - 1, -1, -1):
+            cur_track = left[i]
+            seek_sequence.append(cur_track)
+
+    return seek_sequence
 
 # Example usage
-requests = [176, 79, 34, 60, 92, 11, 41, 114]
-initial_head_position = 176
-direction = 'right'
+arr = [176, 79, 34, 60, 92, 11, 41, 114]
+head = 176
+direction = "left"
 
-servicing_order = look_scheduling(requests, initial_head_position, direction)
-print("Order in which requests are serviced:", servicing_order)
+sequence = LOOK(arr, head, direction)
+print("The sequence of movements is:", sequence)
