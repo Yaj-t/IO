@@ -1,86 +1,75 @@
 import matplotlib.pyplot as plt
-
+import random
 def LOOK(arr, head, direction):
+    """
+    Function to perform the LOOK algorithm
+
+    :param arr: List of disk locations to access
+    :param head: Starting position of the disk head
+    :param direction: Direction of head movement ('left' or 'right')
+    :return: The order of disk accesses
+    """
     size = len(arr)
     distance = 0
     seek_sequence = []
 
-    # Append end values which may not have been included
-    if direction == 'left':
-        left = [0]
-        right = []
-    elif direction == 'right':
-        left = []
-        right = [199]  # assuming disk size of 200
+    # Appending end values which has to be visited
+    # before reversing the direction
+    if direction == "left":
+        left = [x for x in arr if x <= head]
+        right = [x for x in arr if x > head]
+        left.sort()
+        right.sort()
 
-    for i in range(size):
-        if arr[i] < head:
-            left.append(arr[i])
-        if arr[i] > head:
-            right.append(arr[i])
+        # First service the requests on the left side
+        for i in range(len(left) - 1, -1, -1):
+            cur_track = left[i]
+            seek_sequence.append(cur_track)
 
-    left.sort()
-    right.sort()
+        # Then move to the right side
+        for i in range(len(right)):
+            cur_track = right[i]
+            seek_sequence.append(cur_track)
 
-    run = 2
-    while run:
-        if direction == 'left':
-            for i in range(len(left) - 1, -1, -1):
-                cur_track = left[i]
+    elif direction == "right":
+        left = [x for x in arr if x <= head]
+        right = [x for x in arr if x > head]
+        left.sort()
+        right.sort()
 
-                # Appending current track to seek sequence
-                seek_sequence.append(cur_track)
+        # First service the requests on the right side
+        for i in range(len(right)):
+            cur_track = right[i]
+            seek_sequence.append(cur_track)
 
-                # Calculate absolute distance
-                distance += abs(cur_track - head)
+        # Then move to the left side
+        for i in range(len(left) - 1, -1, -1):
+            cur_track = left[i]
+            seek_sequence.append(cur_track)
 
-                # Update current head
-                head = cur_track
+    return seek_sequence
 
-            # Reversing the direction
-            direction = 'right'
-                
-        elif direction == 'right':
-            for i in range(len(right)):
-                cur_track = right[i]
-
-                # Appending current track to seek sequence
-                seek_sequence.append(cur_track)
-
-                # Calculate absolute distance
-                distance += abs(cur_track - head)
-
-                # Update current head
-                head = cur_track
-
-            # Reversing the direction
-            direction = 'left'
-                
-        run -= 1
-
-    return distance, seek_sequence
-
-# Example Usage
+# Example usage
+# arr = [random.randint(0, 199) for _ in range(20)]
 arr = [176, 79, 34, 60, 92, 11, 41, 114]
-head = 200
-direction = 'left'
+head = arr[0]
+direction = "left"
 
-distance, seek_sequence = LOOK(arr, head, direction)
+print(f"array: {arr} head: {head} direction: {direction}")
 
-print("Total number of seek operations =", distance)
-print("Seek Sequence is", seek_sequence)
+sequence = LOOK(arr, head, direction)
+print("The sequence of movements is:", sequence)
 
-# Plotting the Graph with numbers on points
+# Plotting the seek sequence with labels
 plt.figure(figsize=(10, 5))
-plt.plot(seek_sequence, marker='o')
-plt.title("Disk Arm Movement - LOOK Algorithm")
-plt.xlabel("Seek Sequence")
-plt.ylabel("Disk Track Number")
-plt.ylim(0, 200)  # Set the y-axis limit to 0-200
-plt.grid(linestyle='--')
+plt.plot(range(len(sequence)), sequence, marker='o', linestyle='-')
+plt.xlabel("Index")
+plt.ylabel("Size")
+plt.title("LOOK Algorithm Seek Sequence")
 
-# Adding numbers to each point
-for i, track_number in enumerate(seek_sequence):
-    plt.text(i, track_number, str(track_number), ha='right', va='bottom')
+# Adding labels to each data point
+for i, size in enumerate(sequence):
+    plt.annotate(f"{size}", (i, size), textcoords="offset points", xytext=(0, 10), ha='center')
 
+plt.grid(True)
 plt.show()
