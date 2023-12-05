@@ -76,5 +76,6 @@ plt.plot(seek_sequence, marker='o')
 plt.title("Disk Arm Movement - LOOK Algorithm")
 plt.xlabel("Seek Sequence")
 plt.ylabel("Disk Track Number")
+plt.ylim(0, 200)  # Set the y-axis limit to 0-200
 plt.grid(linestyle='--')
 plt.show()
