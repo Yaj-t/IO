@@ -1,47 +1,31 @@
 import matplotlib.pyplot as plt
 import random
 
-def SCAN(arr, head, direction):
+def SSTF(requests, head):
     """
-    Function to perform SCAN on Disk
+    Function to perform SSTF on Disk
 
     Parameters:
-    arr (list): Array of disk locations to service
+    requests (list): Array of disk locations to service
     head (int): Starting position of disk head
-    direction (str): Direction to move ('left' or 'right')
 
     Returns:
     list: Order of serviced requests
     """
-    
     seek_sequence = []
-
-    # Appending end values which has to be visited before reversing the direction
-    if direction == 'left':
-        arr.append(0)
-    elif direction == 'right':
-        arr.append(199)
+    while requests:
+        # Calculate distance from head to each request
+        distance = {abs(head - r): r for r in requests}
         
-    size = len(arr)
-    arr.sort()
-
-    # Find the position to start the servicing
-    index = arr.index(head)
-
-    # Move to the end in the specified direction and then reverse
-    if direction == 'left':
-        for i in range(index, -1, -1):
-            seek_sequence.append(arr[i])
+        # Find the closest request
+        closest_request = distance[min(distance)]
         
-        for i in range(index + 1, size):
-            seek_sequence.append(arr[i])
-
-    elif direction == 'right':
-        for i in range(index, size):
-            seek_sequence.append(arr[i])
+        # Add the closest request to the seek sequence and remove it from the requests list
+        seek_sequence.append(closest_request)
+        requests.remove(closest_request)
         
-        for i in range(index - 1, -1, -1):
-            seek_sequence.append(arr[i])
+        # Move the head to the closest request
+        head = closest_request
 
     return seek_sequence
 
@@ -59,7 +43,7 @@ def Plot(sequence, totalSeekTime):
     plt.plot(range(len(sequence)), sequence, marker='o', linestyle='-')
     plt.xlabel("Index")
     plt.ylabel("Size")
-    plt.suptitle("SCAN Algorithm Seek Sequence")
+    plt.suptitle("SSTF Algorithm Seek Sequence")
     plt.title(f'Total Seek Time: {totalSeekTime}')
 
 
@@ -69,16 +53,15 @@ def Plot(sequence, totalSeekTime):
 
     plt.grid(True)
     plt.show()
-
-
+    
 # Example usage
 # arr = [random.randint(0, 199) for _ in range(20)]
 arr = [176, 79, 34, 60, 92, 11, 41, 114]
 head = arr[0]
-direction = "right"
-print(f"array: {arr} head: {head} direction: {direction}")
 
-sequence = SCAN(arr, head, direction)
+print(f"array: {arr} head: {head}")
+
+sequence = SSTF(arr, head)
 print("The sequence of movements is:", sequence)
 
 totalSeekTime =TotalSeekTime(sequence)
